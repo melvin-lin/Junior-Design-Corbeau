@@ -6,23 +6,30 @@
  *  1/28/20
  */
 
-int onSwitch = 1;
+int onSwitch = 2;
 int motorGate = 4;
-int inputPin = A0;
-int motorValue;
+int potPin = A0;
+int motorValue = 0;
+int potValue = 0;
 
 void setup() {
   pinMode(motorGate, OUTPUT);
-  pinMode(onSwitch, INPUT);
-  pinMode(inputPin, INPUT);
-
+  pinMode(onSwitch, INPUT_PULLUP);
 }
 
 void loop() {
-  motorValue = 255;
+  potValue = analogRead(potPin);
+  if (potValue < 0 ){
+    potValue = 0;
+  } else if (potValue > 255){
+    potValue = 255;
+  }
+  analogWrite(motorGate, motorValue);
   
   if(digitalRead(onSwitch)){
-    analogWrite(motorGate, motorValue);
+    motorValue = potValue;
+  } else{
+    motorValue = 0;
   }
 
 }

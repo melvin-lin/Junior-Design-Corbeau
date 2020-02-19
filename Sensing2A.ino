@@ -39,7 +39,7 @@ int motor2_speed = 100;
 int red_value = 0;
 int blue_value = 0;
 float red_threshold = 3.0;
-float blue_threshold = 1.5;
+float blue_threshold = 3.0;
 float red_voltage = 0;
 float blue_voltage = 0;
 
@@ -85,37 +85,42 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(red_led_out, LOW);
-  digitalWrite(blue_led_out, LOW);
-  
   //shine red led, read input
   digitalWrite(red_led, HIGH);
-  delay(1000);
+  delay(100);
   red_value = analogRead(light_sensor);
   red_voltage = red_value * (5.0 / 1023);
-  delay(1000);
+  delay(100);
   digitalWrite(red_led, LOW);
+  
+  delay(250);
 
   //shine blue led, read input
   digitalWrite(blue_led, HIGH);
-  delay(1000);
+  delay(100);
   blue_value = analogRead(light_sensor);
   blue_voltage = blue_value * (5.0 / 1023);
-  delay(1000);
+  delay(100);
   digitalWrite(blue_led, LOW);
+
+  delay(250);
   
   //make decision, output what color it senses
   if(red_voltage > red_threshold){
     digitalWrite(red_led_out, HIGH);
+  } else{
+    digitalWrite(red_led_out, LOW);
   }
   if(blue_voltage > blue_threshold){
     digitalWrite(blue_led_out, HIGH);
+  } else{
+    digitalWrite(blue_led_out, LOW);
   }
+  /*
   Serial.print("red value: ");
   Serial.println(red_value);
   Serial.print("blue value: ");
-  Serial.println(blue_value);
-  delay(3000);
+  Serial.println(blue_value); */
   
   /*
   state_machine();

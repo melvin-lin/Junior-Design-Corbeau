@@ -22,9 +22,12 @@ int red_led = 50;
 int blue_led = 52;
 int red_led_out = 48;
 int blue_led_out = 46;
+int yel_led_out = 23;
+//Hall
+int hall_sensor = A4;
 
 //Input pins
-int light_sensor = A0;
+int light_sensor = A5;
 //Dipswitch pins
 int go_pin = 51;
 int rev_pin = 49;
@@ -38,10 +41,13 @@ int motor1_speed = 100;
 int motor2_speed = 100;
 int red_value = 0;
 int blue_value = 0;
-float red_threshold = 3.0;
-float blue_threshold = 3.0;
+int hall_value = 0;
+float red_threshold = 2.5;
+float blue_threshold = 2.5;
+float hall_threshold = 4;
 float red_voltage = 0;
 float blue_voltage = 0;
+float hall_voltage = 0;
 
 //States
 enum State_enum{BRAKE, SPIN, FWD, REV, LEFT, RIGHT};
@@ -71,6 +77,9 @@ void setup() {
   pinMode(en2_pin, OUTPUT);
   pinMode(red_led, OUTPUT);
   pinMode(blue_led, OUTPUT);
+  pinMode(red_led_out, OUTPUT);
+  pinMode(blue_led_out, OUTPUT);
+  pinMode(yel_led_out, OUTPUT);
 
   //Input pins
   pinMode(go_pin, INPUT_PULLUP);
@@ -79,9 +88,7 @@ void setup() {
   pinMode(spin_pin, INPUT_PULLUP);
   pinMode(l_pin, INPUT_PULLUP);
   pinMode(r_pin, INPUT_PULLUP);
-  //pinMode(light_sensor, INPUT_PULLUP);
 
-  Serial.begin(9600);
 }
 
 void loop() {
@@ -104,6 +111,9 @@ void loop() {
   digitalWrite(blue_led, LOW);
 
   delay(250);
+
+  hall_value = analogRead(hall_sensor);
+  hall_voltage = hall_value * (5.0 / 1023);
   
   //make decision, output what color it senses
   if(red_voltage > red_threshold){
@@ -116,16 +126,12 @@ void loop() {
   } else{
     digitalWrite(blue_led_out, LOW);
   }
-  /*
-  Serial.print("red value: ");
-  Serial.println(red_value);
-  Serial.print("blue value: ");
-  Serial.println(blue_value); */
   
-  /*
-  state_machine();
-  delay(30); */
-  
+  if(hall_voltage > hall_threshold){
+    digitalWrite(yel_led_out, HIGH);
+  } else{
+    digitalWrite(yel_led_out, LOW);
+  } 
 }
 
 void state_machine(){

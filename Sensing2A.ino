@@ -29,12 +29,12 @@ int hall_sensor = A4;
 //Input pins
 int light_sensor = A5;
 //Dipswitch pins
-int go_pin = 51;
-int rev_pin = 49;
-int stop_pin = 31;
-int l_pin = 47;
-int r_pin = 45;
-int spin_pin = 43;
+int go_pin = 13;
+int rev_pin = 12;
+int stop_pin = 4;
+int l_pin = 11;
+int r_pin = 7;
+int spin_pin = 10;
 
 //Integers
 int motor1_speed = 100;
@@ -92,25 +92,29 @@ void setup() {
 }
 
 void loop() {
+  
+  /*state_machine();
+  delay(30);*/
+
   //shine red led, read input
   digitalWrite(red_led, HIGH);
-  delay(100);
+  delay(50);
   red_value = analogRead(light_sensor);
   red_voltage = red_value * (5.0 / 1023);
-  delay(100);
+  delay(50);
   digitalWrite(red_led, LOW);
   
-  delay(250);
+  delay(50);
 
   //shine blue led, read input
   digitalWrite(blue_led, HIGH);
-  delay(100);
+  delay(50);
   blue_value = analogRead(light_sensor);
   blue_voltage = blue_value * (5.0 / 1023);
-  delay(100);
+  delay(50);
   digitalWrite(blue_led, LOW);
 
-  delay(250);
+  delay(50);
 
   hall_value = analogRead(hall_sensor);
   hall_voltage = hall_value * (5.0 / 1023);
@@ -118,9 +122,17 @@ void loop() {
   //make decision, output what color it senses
   if(red_voltage > red_threshold){
     digitalWrite(red_led_out, HIGH);
+    if(blue_voltage > blue_threshold){
+      brake();
+      digitalWrite(blue_led_out, HIGH);
+    } else{
+      clockwise();
+      delay(1000);
+    }
   } else{
     digitalWrite(red_led_out, LOW);
   }
+  
   if(blue_voltage > blue_threshold){
     digitalWrite(blue_led_out, HIGH);
   } else{
@@ -132,6 +144,7 @@ void loop() {
   } else{
     digitalWrite(yel_led_out, LOW);
   } 
+  
 }
 
 void state_machine(){
@@ -223,10 +236,10 @@ void ccw(){
 void brake(){
   digitalWrite(en1_pin, HIGH);
   digitalWrite(en2_pin, HIGH);
-  analogWrite(q1_pin, 0);
-  analogWrite(q2_pin, 0);
-  analogWrite(q3_pin, 0);
-  analogWrite(q4_pin, 0);
+  digitalWrite(q1_pin, LOW);
+  digitalWrite(q2_pin, LOW);
+  digitalWrite(q3_pin, LOW);
+  digitalWrite(q4_pin, LOW);
 }
 
 void left_turn(){
